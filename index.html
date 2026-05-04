@@ -806,6 +806,42 @@ circle.fg.urg{
   box-shadow:0 0 12px rgba(147,51,234,0.8),0 0 24px rgba(147,51,234,0.4)!important;
 }
 
+
+/* ── SETTINGS PANEL ── */
+#settingsBtn{
+  background:rgba(255,255,255,0.08);border:1px solid rgba(251,191,36,0.3);
+  border-radius:50%;width:34px;height:34px;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;font-size:16px;flex-shrink:0;
+  transition:all .2s;
+}
+#settingsBtn:hover{background:rgba(249,115,22,0.2);border-color:rgba(249,115,22,0.5);}
+#settingsPanel{
+  position:fixed;top:60px;right:12px;z-index:9900;
+  background:rgba(15,5,32,0.95);backdrop-filter:blur(24px);
+  border:1px solid rgba(251,191,36,0.3);border-radius:20px;
+  padding:18px;min-width:240px;
+  box-shadow:0 8px 40px rgba(0,0,0,0.5),0 0 30px rgba(107,33,168,0.2);
+  display:none;
+}
+#settingsPanel.open{display:block;animation:fadeInDown .2s ease;}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.vol-row{margin-bottom:14px;}
+.vol-label{font-size:11px;color:var(--ora3);letter-spacing:1px;margin-bottom:8px;
+  display:flex;justify-content:space-between;align-items:center;}
+.vol-val{color:var(--gold);font-weight:700;}
+.vol-slider{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:4px;border-radius:4px;outline:none;cursor:pointer;
+  background:linear-gradient(to right,var(--ora2) 0%,var(--ora2) 50%,rgba(255,255,255,0.15) 50%);
+}
+.vol-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+  background:linear-gradient(135deg,var(--ora2),var(--pur2));
+  box-shadow:0 0 8px rgba(249,115,22,0.5);cursor:pointer;
+}
+.settings-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:14px;
+  padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.1);}
+
 </style>
 </head>
 <body>
@@ -990,6 +1026,8 @@ circle.fg.urg{
 <div id="toast"></div>
 
 <script>
+'use strict';
+
 'use strict';
 
 'use strict';
@@ -1202,28 +1240,7 @@ const WE = (() => {
     ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2);
     ctx.strokeStyle='rgba(251,191,36,0.35)'; ctx.lineWidth=2; ctx.stroke();
 
-    // ── TEXT: horizontal, auto-sized ──
-    for(let i=0;i<n;i++){
-      const mid=angle+i*arc+arc/2;
-      const realIdx=activeCatIndices[i];
-      const name=CATS[realIdx].n;
-      const lR=R*0.60;
-      const lx=cx+Math.cos(mid)*lR;
-      const ly=cy+Math.sin(mid)*lR;
-      const chord=2*lR*Math.sin(arc/2)*0.78;
-      let fs=chord/(Math.max(name.length,3)*0.55);
-      fs=Math.min(Math.max(fs,8),sz*0.042);
-      ctx.save();
-      ctx.textAlign='center';
-      ctx.textBaseline='middle';
-      ctx.font=`900 ${fs}px Cairo`;
-      ctx.lineWidth=3.5;ctx.lineJoin='round';
-      ctx.strokeStyle='rgba(0,0,0,0.95)';
-      ctx.strokeText(name,lx,ly);
-      ctx.fillStyle='#ffffff';
-      ctx.fillText(name,lx,ly);
-      ctx.restore();
-    }
+    // ── No text on wheel — images only ──
 
     // Center hub
     ctx.beginPath(); ctx.arc(cx,cy,CR+3,0,Math.PI*2);
@@ -1333,28 +1350,7 @@ const TWE = (() => {
     ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2);
     ctx.strokeStyle='rgba(251,191,36,0.35)'; ctx.lineWidth=2; ctx.stroke();
 
-    // ── TEXT: horizontal, auto-sized ──
-    for(let i=0;i<n;i++){
-      const mid=angle+i*arc+arc/2;
-      const realIdx=activeCatIndices[i];
-      const name=CATS[realIdx].n;
-      const lR=R*0.60;
-      const lx=cx+Math.cos(mid)*lR;
-      const ly=cy+Math.sin(mid)*lR;
-      const chord=2*lR*Math.sin(arc/2)*0.78;
-      let fs=chord/(Math.max(name.length,3)*0.55);
-      fs=Math.min(Math.max(fs,8),sz*0.042);
-      ctx.save();
-      ctx.textAlign='center';
-      ctx.textBaseline='middle';
-      ctx.font=`900 ${fs}px Cairo`;
-      ctx.lineWidth=3.5;ctx.lineJoin='round';
-      ctx.strokeStyle='rgba(0,0,0,0.95)';
-      ctx.strokeText(name,lx,ly);
-      ctx.fillStyle='#ffffff';
-      ctx.fillText(name,lx,ly);
-      ctx.restore();
-    }
+    // ── No text on wheel — images only ──
 
     // Center hub
     ctx.beginPath(); ctx.arc(cx,cy,CR+3,0,Math.PI*2);
@@ -1648,7 +1644,7 @@ const H = {
       <div class="ctrl-row">
         <button class="btn btn-ok" onclick="H.s1ok()">✅ صحيحة</button>
         <button class="btn btn-no" onclick="H.s1no()">❌ خاطئة</button>
-        ${hasAlt?`<button class="btn btn-chq" onclick="H.s1changeQ()">🔄 تغيير السؤال</button>`:''}
+        <button class="btn btn-chq" onclick="H.s1changeQ()">🔄 تغيير السؤال</button>
         <button class="btn btn-nxt" onclick="H.s1skip()">تخطي ⬅</button>
       </div>
       <div class="info">فوز بدون أخطاء = نقطتان ⭐⭐ | فوز عادي = نقطة واحدة</div>
@@ -1797,7 +1793,7 @@ const H = {
         </div>
       </div>
       <div class="ctrl-row">
-        ${hasAlt?`<button class="btn btn-chq" onclick="H.s2changeQ()">🔄 تغيير السؤال</button>`:''}
+        <button class="btn btn-chq" onclick="H.s2changeQ()">🔄 تغيير السؤال</button>
         <button class="btn btn-nxt" id="startTimerBtn" onclick="H.startTimer()"
           ${ST.s2.selTeam===-1?'disabled':''}>⏱️ ابدأ المؤقت</button>
       </div>
@@ -2384,7 +2380,20 @@ const BGM=(()=>{
       aud=new Audio(_u);aud.loop=true;aud.volume=0.18;
     }catch(e){}
   }
-  function play(){_i();if(aud&&aud.paused)aud.play().catch(()=>{});}
+  function play(){
+    _i();
+    if(!aud)return;
+    aud.loop=true;
+    if(aud.paused){
+      const p=aud.play();
+      if(p&&p.catch) p.catch(()=>{
+        // Safari autoplay blocked — try on next user gesture
+        const resume=()=>{aud.play().catch(()=>{});document.removeEventListener('touchstart',resume);document.removeEventListener('click',resume);};
+        document.addEventListener('touchstart',resume,{once:true});
+        document.addEventListener('click',resume,{once:true});
+      });
+    }
+  }
   function stop(){if(aud&&!aud.paused){aud.pause();aud.currentTime=0;}}
   function fadeOut(){
     if(!aud||aud.paused)return;
@@ -2393,11 +2402,11 @@ const BGM=(()=>{
       else{aud.pause();aud.volume=0.18;clearInterval(iv);}
     },80);
   }
-  return {play,stop,fadeOut};
+  return {play,stop,fadeOut,_aud:()=>aud};
 })();
 
 /* init - wrapped in DOMContentLoaded for Safari compatibility */
-document.addEventListener("DOMContentLoaded", ()=>{ updateScores(); });
+document.addEventListener("DOMContentLoaded", ()=>{ updateScores(); initSettings(); });
 
 /* ── SOUND ENGINE ── */
 const SFX = (() => {
@@ -2407,6 +2416,7 @@ const SFX = (() => {
     try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
   }
   function beep(freq=440, dur=0.08, type='sine', vol=0.3, delay=0) {
+    vol = vol * (typeof sfxVolume !== 'undefined' ? sfxVolume : 1);
     init();
     if (!ctx) return;
     try {
@@ -2546,6 +2556,88 @@ window.addEventListener('beforeinstallprompt', e => {
   }, 3000);
 });
 
+
+/* ══ SETTINGS / VOLUME CONTROLS ══ */
+let sfxVolume = 0.8;  // 0..1
+let bgmVolume = 0.18; // 0..1
+
+function _updateSlider(el, val){
+  const pct = (val*100).toFixed(0);
+  el.style.background = `linear-gradient(to right, var(--ora2) 0%, var(--ora2) ${pct}%, rgba(255,255,255,0.15) ${pct}%)`;
+}
+
+function initSettings(){
+  // Create settings button in all topbars
+  document.querySelectorAll('.topbar').forEach(tb=>{
+    const btn = document.createElement('button');
+    btn.id = 'settingsBtn_' + Math.random().toString(36).slice(2,6);
+    btn.className = 'settings-btn-inner';
+    btn.style.cssText = 'background:rgba(255,255,255,0.08);border:1px solid rgba(251,191,36,0.3);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;flex-shrink:0;color:#fff;';
+    btn.innerHTML = '⚙️';
+    btn.onclick = toggleSettings;
+    tb.appendChild(btn);
+  });
+
+  // Create panel
+  const panel = document.createElement('div');
+  panel.id = 'settingsPanel';
+  panel.innerHTML = `
+    <div class="settings-title">⚙️ إعدادات الصوت</div>
+    <div class="vol-row">
+      <div class="vol-label">🎵 موسيقى الخلفية <span class="vol-val" id="bgmValLbl">18%</span></div>
+      <input type="range" class="vol-slider" id="bgmSlider" min="0" max="100" value="18">
+    </div>
+    <div class="vol-row">
+      <div class="vol-label">🔊 المؤثرات الصوتية <span class="vol-val" id="sfxValLbl">80%</span></div>
+      <input type="range" class="vol-slider" id="sfxSlider" min="0" max="100" value="80">
+    </div>
+    <div style="text-align:center;margin-top:4px">
+      <button onclick="toggleSettings()" style="background:rgba(249,115,22,0.2);border:1px solid rgba(249,115,22,0.4);color:var(--ora3);padding:6px 20px;border-radius:20px;cursor:pointer;font-family:Cairo;font-size:12px;">إغلاق</button>
+    </div>
+  `;
+  document.body.appendChild(panel);
+
+  // BGM slider
+  const bgmSlider = document.getElementById('bgmSlider');
+  const bgmLbl    = document.getElementById('bgmValLbl');
+  bgmSlider.addEventListener('input', ()=>{
+    bgmVolume = bgmSlider.value / 100;
+    bgmLbl.textContent = bgmSlider.value + '%';
+    _updateSlider(bgmSlider, bgmVolume);
+    if(BGM && BGM._setVol) BGM._setVol(bgmVolume);
+    // Access internal aud through BGM
+    const a = BGM._aud ? BGM._aud() : null;
+    if(a) a.volume = bgmVolume;
+  });
+
+  // SFX slider
+  const sfxSlider = document.getElementById('sfxSlider');
+  const sfxLbl    = document.getElementById('sfxValLbl');
+  sfxSlider.addEventListener('input', ()=>{
+    sfxVolume = sfxSlider.value / 100;
+    sfxLbl.textContent = sfxSlider.value + '%';
+    _updateSlider(sfxSlider, sfxVolume);
+  });
+
+  _updateSlider(bgmSlider, 0.18);
+  _updateSlider(sfxSlider, 0.8);
+
+  // Close panel on outside click
+  document.addEventListener('click', e=>{
+    const panel = document.getElementById('settingsPanel');
+    if(panel && panel.classList.contains('open') && !panel.contains(e.target) && !e.target.closest('.settings-btn-inner')){
+      panel.classList.remove('open');
+    }
+  });
+}
+
+function toggleSettings(){
+  const p = document.getElementById('settingsPanel');
+  if(p) p.classList.toggle('open');
+}
+
+// Expose BGM aud setter
+
 /* ══ PWA SW ══ */
 if('serviceWorker'in navigator){
   const c='self.addEventListener("install",e=>self.skipWaiting());self.addEventListener("activate",e=>e.waitUntil(clients.claim()));self.addEventListener("fetch",e=>e.respondWith(fetch(e.request).catch(()=>new Response(""))));';
@@ -2568,6 +2660,7 @@ window.addEventListener('beforeinstallprompt',e=>{
     setTimeout(()=>{try{d.remove();}catch(e){}},9000);
   },3500);
 });
+
 
 </script>
 </body>

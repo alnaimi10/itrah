@@ -298,11 +298,17 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--white);disp
 
 /* ── CAT DISPLAY ── */
 .cat-box{
-  text-align:center;padding:12px 24px;
-  background:linear-gradient(135deg,rgba(234,88,12,0.12),rgba(147,51,234,0.12));
+  padding:12px 18px;
+  background:linear-gradient(135deg,rgba(234,88,12,0.10),rgba(147,51,234,0.10));
   backdrop-filter:blur(16px);
   border:1px solid rgba(249,115,22,0.25);
   border-radius:16px;margin-bottom:14px;width:100%;max-width:360px;
+  display:flex;align-items:center;gap:14px;
+}
+.cat-box-img{
+  width:60px;height:60px;border-radius:14px;object-fit:cover;flex-shrink:0;
+  border:2px solid rgba(249,115,22,0.45);
+  box-shadow:0 0 16px rgba(249,115,22,0.25);
 }
 .cat-em{font-size:28px;margin-bottom:4px}
 .cat-nm{font-size:18px;font-weight:800;color:var(--ora2)}
@@ -842,6 +848,28 @@ circle.fg.urg{
 .settings-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:14px;
   padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.1);}
 
+
+/* ── CAT BOX FULL BG ── */
+.cat-box-full{
+  position:relative;width:100%;max-width:440px;height:110px;
+  border-radius:18px;overflow:hidden;margin-bottom:14px;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  border:1.5px solid rgba(249,115,22,0.35);
+  box-shadow:0 0 24px rgba(249,115,22,0.2),0 8px 24px rgba(0,0,0,0.4);
+  flex-shrink:0;
+}
+.cat-box-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(55,10,110,0.72),rgba(120,40,5,0.65));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;
+}
+.cbf-em{font-size:28px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.8));}
+.cbf-name{
+  font-size:20px;font-weight:900;color:#fff;font-family:'Tajawal',sans-serif;
+  text-shadow:0 2px 8px rgba(0,0,0,0.9),0 0 20px rgba(249,115,22,0.4);
+  letter-spacing:.5px;
+}
 </style>
 </head>
 <body>
@@ -1026,6 +1054,10 @@ circle.fg.urg{
 <div id="toast"></div>
 
 <script>
+'use strict';
+
+'use strict';
+
 'use strict';
 
 'use strict';
@@ -1626,9 +1658,11 @@ const H = {
         <div class="stg-name">🎡 أُذكر</div>
       </div>
       <div class="host-badge">🎙️ شاشة الهوست</div>
-      <div class="cat-box">
-        <div class="cat-em">${cat.e}</div>
-        <div class="cat-nm">${cat.n}</div>
+      <div class="cat-box-full" style="background-image:url('${CAT_IMG_MD[ci]||''}')">
+        <div class="cat-box-overlay">
+          <div class="cbf-em">${cat.e}</div>
+          <div class="cbf-name">${cat.n}</div>
+        </div>
       </div>
       <div class="q-card">
         <div class="q-lbl">السؤال</div>
@@ -1781,7 +1815,12 @@ const H = {
         <div class="stg-name">💰 المزاد</div>
       </div>
       <div class="host-badge">🎙️ شاشة الهوست</div>
-      <div class="cat-box"><div class="cat-em">${cat.e}</div><div class="cat-nm">${cat.n}</div></div>
+      <div class="cat-box-full" style="background-image:url('${CAT_IMG_MD[ci]||''}')">
+        <div class="cat-box-overlay">
+          <div class="cbf-em">${cat.e}</div>
+          <div class="cbf-name">${cat.n}</div>
+        </div>
+      </div>
       <div class="q-card"><div class="q-lbl">السؤال</div><div class="q-txt">${q.q}</div></div>
       <div class="info">اختر الفريق المزايد</div>
       <div class="auc-row">
@@ -1844,9 +1883,11 @@ const H = {
         <div class="stg-name">💰 المزاد</div>
       </div>
       <div class="host-badge">🎙️ شاشة الهوست</div>
-      <div class="cat-box" style="display:flex;align-items:center;gap:14px;text-align:right">
-        <img src="${CAT_IMG_MD[base.ci]||CAT_IMG_MD[q.ci]||''}" style="width:52px;height:52px;border-radius:12px;object-fit:cover;border:2px solid rgba(249,115,22,0.4);flex-shrink:0" onerror="this.style.display='none'">
-        <div><div class="cat-nm">${cat.n}</div></div>
+      <div class="cat-box-full" style="background-image:url('${CAT_IMG_MD[ci2]||''}')">
+        <div class="cat-box-overlay">
+          <div class="cbf-em">${cat.e}</div>
+          <div class="cbf-name">${cat.n}</div>
+        </div>
       </div>
       <div class="q-card"><div class="q-lbl">السؤال</div><div class="q-txt">${q.q}</div></div>
       <div class="info gold">يجيب: الفريق ${ST.s2.selTeam===0?'الأول 🔴':'الثاني 🟢'}</div>
@@ -1877,7 +1918,7 @@ const H = {
     addScore(w,1);
     toast(`🏆 نقطة للفريق ${w===0?'الأول':'الثاني'}!`,'inf');
     ST.s2.qi++;
-    if(ST.s2.qi>=S2Q.length){ ST.s2.phase='done'; H.s2Done(); }
+    if(ST.s2.qi>=4){ ST.s2.phase='done'; H.s2Done(); }
     else { ST.s2.phase='wheel'; H.s2Wheel(); }
     BC.postMessage({t:'S2RES',sc:ST.sc,phase:ST.s2.phase});
   },
@@ -2030,9 +2071,11 @@ const T = {
         <div class="stg-badge">المسابقة الأولى — أُذكر</div>
         <div class="stg-name">🎡 أُذكر</div>
       </div>
-      <div class="cat-box" style="display:flex;align-items:center;gap:14px;text-align:right">
-        <img src="${CAT_IMG_MD[ci]||''}" style="width:52px;height:52px;border-radius:12px;object-fit:cover;border:2px solid rgba(249,115,22,0.4);flex-shrink:0" onerror="this.style.display='none'">
-        <div><div class="cat-nm">${cat.n}</div></div>
+      <div class="cat-box-full" style="background-image:url('${CAT_IMG_MD[ci]||''}')">
+        <div class="cat-box-overlay">
+          <div class="cbf-em">${cat.e}</div>
+          <div class="cbf-name">${cat.n}</div>
+        </div>
       </div>
       <div class="q-card"><div class="q-lbl">السؤال</div><div class="q-txt">${q.q}</div></div>
       ${teamPanelHTML(s.err,s.turn)}
@@ -2063,9 +2106,11 @@ const T = {
         <div class="stg-badge">سؤال ${qi+1} / ${S2Q.length}</div>
         <div class="stg-name">💰 المزاد</div>
       </div>
-      <div class="cat-box" style="display:flex;align-items:center;gap:14px;text-align:right">
-        <img src="${CAT_IMG_MD[base.ci]||CAT_IMG_MD[q.ci]||''}" style="width:52px;height:52px;border-radius:12px;object-fit:cover;border:2px solid rgba(249,115,22,0.4);flex-shrink:0" onerror="this.style.display='none'">
-        <div><div class="cat-nm">${cat.n}</div></div>
+      <div class="cat-box-full" style="background-image:url('${CAT_IMG_MD[ci2]||''}')">
+        <div class="cat-box-overlay">
+          <div class="cbf-em">${cat.e}</div>
+          <div class="cbf-name">${cat.n}</div>
+        </div>
       </div>
       <div class="q-card"><div class="q-lbl">السؤال</div><div class="q-txt">${displayQ}</div></div>
       <div class="info">🔥 ابدأ المزايدة!</div>`;
@@ -2079,9 +2124,11 @@ const T = {
         <div class="stg-badge">سؤال ${ST.s2.qi+1}</div>
         <div class="stg-name">💰 المزاد</div>
       </div>
-      <div class="cat-box" style="display:flex;align-items:center;gap:14px;text-align:right">
-        <img src="${CAT_IMG_MD[base.ci]||CAT_IMG_MD[q.ci]||''}" style="width:52px;height:52px;border-radius:12px;object-fit:cover;border:2px solid rgba(249,115,22,0.4);flex-shrink:0" onerror="this.style.display='none'">
-        <div><div class="cat-nm">${cat.n}</div></div>
+      <div class="cat-box-full" style="background-image:url('${CAT_IMG_MD[ci2]||''}')">
+        <div class="cat-box-overlay">
+          <div class="cbf-em">${cat.e}</div>
+          <div class="cbf-name">${cat.n}</div>
+        </div>
       </div>
       <div class="q-card"><div class="q-lbl">السؤال</div><div class="q-txt">${q.q}</div></div>
       <div class="info gold">يجيب: الفريق ${sel===0?'الأول 🔴':'الثاني 🟢'}</div>
@@ -2660,6 +2707,8 @@ window.addEventListener('beforeinstallprompt',e=>{
     setTimeout(()=>{try{d.remove();}catch(e){}},9000);
   },3500);
 });
+
+
 
 
 </script>
